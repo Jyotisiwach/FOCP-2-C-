@@ -1,0 +1,71 @@
+#include<iostream>
+#include<string>
+#include<map>
+#include<vector>
+using namespace std;
+
+// Student class
+class Student {
+private:
+    string name;
+    int age;
+    public:
+    void setData(string n, int a) {
+        if (n != "") name = n;
+        else name = "Unknown";
+        
+        if (a > 0 && a < 150) age = a;
+        else age = 18;
+    }
+     void show() {
+        cout << "Name: " << name << ", Age: " << age << endl;
+    }
+};
+
+// GradeBook class
+class GradeBook {
+private:
+    map<int, int> grades; // student ID -> grade
+public:
+    void addGrade(int id, int grade) {
+        grades[id] = grade;
+    }
+    void showGrades() {
+        for (auto g : grades)
+            cout << "ID: " << g.first << ", Grade: " << g.second << endl;
+    }
+};
+
+// EnrollmentManager class
+class EnrollmentManager {
+private:
+    map<string, vector<int>> courseEnrollments;
+public:
+    void enroll(string course, int id) {
+        courseEnrollments[course].push_back(id);
+    }
+    void showEnrollment(string course) {
+        cout << "Students in " << course << ": ";
+        for (int id : courseEnrollments[course])
+            cout << id << " ";
+        cout << endl;
+    }
+};
+
+int main() {
+    Student s1;
+    s1.setData("Jyoti", 18);
+    s1.show();
+
+    GradeBook gb;
+    gb.addGrade(1, 85);
+    gb.addGrade(2, 40);
+    gb.showGrades();
+
+    EnrollmentManager em;
+    em.enroll("Math", 1);
+    em.enroll("Math", 2);
+    em.showEnrollment("Math");
+
+    return 0;
+}
