@@ -1,0 +1,65 @@
+#include<iostream>
+using namespace std;
+
+// Base class
+class Person {
+protected:
+    string name;
+    int age;
+public:
+    Person(string n, int a) : name(n), age(a) {}
+
+    virtual void displayDetails() {
+        cout << "Name: " << name << ", Age: " << age << endl;
+    }
+
+    virtual double calculatePayment() {
+        return 0.0;
+    }
+};
+
+// Student class
+class Student : public Person {
+    double gpa;
+public:
+    Student(string n, int a, double g) : Person(n, a), gpa(g) {}
+
+    void displayDetails() override {
+        cout << "[Student] " << name << ", Age: " << age << ", GPA: " << gpa << endl;
+    }
+
+    double calculatePayment() override {
+        return 10000; // Student fee
+    }
+};
+
+// Professor class
+class Professor : public Person {
+    double salary;
+public:
+    Professor(string n, int a, double s) : Person(n, a), salary(s) {}
+
+    void displayDetails() override {
+        cout << "[Professor] " << name << ", Age: " << age << ", Salary: " << salary << endl;
+    }
+
+    double calculatePayment() override {
+        return salary;
+    }
+};
+
+int main() {
+    Student s1("Jyoti", 18, 3.8);
+    Professor p1("Dr. Sharma", 45, 80000);
+
+    Person* people[] = { &s1, &p1 };
+
+    for (int i = 0; i < 2; i++) {
+        people[i]->displayDetails();
+        cout << "Payment: " << people[i]->calculatePayment() << endl << endl;
+    }
+    return 0;
+}
+
+        
+
