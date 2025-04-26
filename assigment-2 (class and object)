@@ -1,0 +1,95 @@
+#include<iostream>
+#include<string>
+using namespace std;
+//Person class
+class person
+public:
+string name;
+int age;
+int id;
+string contact info;
+};
+//student class
+class student{
+public:
+string enrollment data;
+string program;
+float cgpa;
+};
+//professor class
+class professor{
+public:
+string department;
+string specialization;
+string hire data;
+];
+// Course Class
+class Course {
+public:
+    string code;
+    string title;
+    int credits;
+    string description;
+};
+// Department Class
+class Department {
+public:
+    string name;
+    string location;
+    double budget;
+};
+int main() {
+    // Creating 2 objects of each class
+
+    Person p1, p2;
+    p1.name = "jyoti";
+    p1.age = 18;
+    p1.ID = 101;
+    p1.contactInfo = "jyoti@gmail.com";
+ p2.name = "harleen";
+    p2.age = 19;
+    p2.ID = 102;
+    p2.contactInfo = "harleen@yahoo.com";
+ Student s1, s2;
+    s1.enrollmentDate = "2021-08-01";
+    s1.program = "Computer Science";
+    s1.GPA = 3.8;
+
+    s2.enrollmentDate = "2022-08-01";
+    s2.program = "Mechanical Engineering";
+    s2.GPA = 3.5;
+ Professor prof1, prof2;
+    prof1.department = "Computer Science";
+    prof1.specialization = "AI";
+    prof1.hireDate = "2015-07-15";
+
+    prof2.department = "Mechanical";
+    prof2.specialization = "Thermodynamics";
+    prof2.hireDate = "2018-06-10";
+Course c1, c2;
+    c1.code = "CS101";
+    c1.title = "Intro to Programming";
+    c1.credits = 3;
+    c1.description = "Basics of Programming";
+  c2.code = "ME202";
+    c2.title = "Thermodynamics";
+    c2.credits = 4;
+    c2.description = "Study of heat and energy";
+  Department d1, d2;
+    d1.name = "Computer Science";
+    d1.location = "Building A";
+    d1.budget = 500000;
+  d2.name = "Mechanical";
+    d2.location = "Building B";
+    d2.budget = 300000;
+ cout << "Person 1: " << p1.name << ", ID: " << p1.ID << endl;
+    cout << "Student 1 GPA: " << s1.GPA << endl;
+    cout << "Professor 1 Specialization: " << prof1.specialization << endl;
+    cout << "Course 1 Title: " << c1.title << endl;
+    cout << "Department 1: " << d1.name << endl;
+
+    return 0;
+}
+
+
+
