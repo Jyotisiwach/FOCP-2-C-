@@ -1,0 +1,37 @@
+#include <iostream>
+using namespace std;
+
+class Professor {
+public:
+    double baseSalary; int years;
+    Professor(double b, int y) : baseSalary(b), years(y) {}
+    virtual double calculatePayment() { return baseSalary + years * 1000; }
+};
+
+class AssistantProfessor : public Professor {
+public:
+    AssistantProfessor(double b, int y) : Professor(b, y) {}
+    double calculatePayment() override { return baseSalary + years * 1000 + 5000; }
+};
+
+class FullProfessor : public Professor {
+public:
+    double grant;
+    FullProfessor(double b, int y, double g) : Professor(b, y), grant(g) {}
+    double calculatePayment() override { return baseSalary + years * 1500 + 20000 + grant; }
+};
+
+class GraduateStudent {
+public:
+    int teach = 0, research = 0;
+    void addTeaching() { teach++; }
+    void addResearch() { research++; }
+};
+
+int main() {
+    AssistantProfessor ap(50000, 5);
+    FullProfessor fp(80000, 10, 30000);
+
+    cout << ap.calculatePayment() << endl;
+    cout << fp.calculatePayment() << endl;
+}
