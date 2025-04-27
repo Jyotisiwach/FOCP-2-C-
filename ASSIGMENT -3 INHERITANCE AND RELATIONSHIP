@@ -1,0 +1,47 @@
+#include <iostream>
+using namespace std;
+
+class Person {
+public:
+    string name;
+    Person(string n) : name(n) {}
+    virtual void displayDetails() { cout << "Name: " << name << endl; }
+    virtual double calculatePayment() = 0;
+};
+
+class Student : public Person {
+public:
+    Student(string n) : Person(n) {}
+    void displayDetails() override { cout << "Student: " << name << endl; }
+};
+
+class UndergraduateStudent : public Student {
+public:
+    UndergraduateStudent(string n) : Student(n) {}
+    void displayDetails() override { Student::displayDetails(); }
+    double calculatePayment() override { return 2000; }
+};
+
+class Professor : public Person {
+public:
+    Professor(string n) : Person(n) {}
+    void displayDetails() override { cout << "Professor: " << name << endl; }
+};
+
+class AssistantProfessor : public Professor {
+public:
+    AssistantProfessor(string n) : Professor(n) {}
+    void displayDetails() override { Professor::displayDetails(); }
+    double calculatePayment() override { return 5000; }
+};
+
+int main() {
+    UndergraduateStudent u("Alice");
+    AssistantProfessor p("Dr. John");
+
+    u.displayDetails();
+    cout << "Payment: $" << u.calculatePayment() << endl;
+
+    p.displayDetails();
+    cout << "Payment: $" << p.calculatePayment() << endl;
+}
