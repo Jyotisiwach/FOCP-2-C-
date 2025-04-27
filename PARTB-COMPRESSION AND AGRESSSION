@@ -1,0 +1,53 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class Professor {
+public: string name;
+    Professor(string n) : name(n) {}
+};
+
+class Course {
+public: Professor* instructor;
+    Course(Professor* p) : instructor(p) {}
+};
+
+class Student {
+public: vector<Course*> courses;
+    void enroll(Course* c) { courses.push_back(c); }
+};
+
+class GraduateStudent : public Student {
+public: Professor* advisor;
+    GraduateStudent(Professor* a) : advisor(a) {}
+};
+
+class Department {
+public: vector<Professor> professors;
+    void addProfessor(string n) { professors.push_back(Professor(n)); }
+};
+
+class University {
+public: vector<Department> departments;
+    void addDepartment(Department d) { departments.push_back(d); }
+};
+
+class Classroom { public: string room; Classroom(string r) : room(r) {} };
+
+class Schedule {
+public:
+    void assign(Course* c, Classroom* r) {
+        cout << "Course assigned to room: " << r->room << endl;
+    }
+};
+
+int main() {
+    Professor p("Dr. John");
+    Course c(&p);
+    Student s; s.enroll(&c);
+    GraduateStudent gs(&p);
+    Department d; d.addProfessor("Dr. Mike");
+    University u; u.addDepartment(d);
+    Classroom room("A1");
+    Schedule sch; sch.assign(&c, &room);
+}
