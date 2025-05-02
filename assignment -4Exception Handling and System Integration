@@ -1,0 +1,266 @@
+#include <iostream>
+#include <stdexcept>
+#include <string>
+#include <vector>
+#include <fstream>
+#include <map>
+using namespace std;
+
+// ----------- Exception Classes --------------
+class CourseFullException : public runtime_error {
+public:
+    CourseFullException(const string& msg) : runtime_error(msg) {}
+};
+
+class PrerequisiteNotMetException : public runtime_error {
+public:
+    PrerequisiteNotMetException(const string& msg) : runtime_error(msg) {}
+};
+
+class EnrollmentDeadlineException : public runtime_error {
+public:
+    EnrollmentDeadlineException(const string& msg) : runtime_error(msg) {}
+};
+
+class InvalidGradeException : public runtime_error {
+public:
+    InvalidGradeException(const string& msg) : runtime_error(msg) {}
+};
+
+class UnauthorizedGradeChangeException : public runtime_error {
+public:
+    UnauthorizedGradeChangeException(const string& msg) : runtime_error(msg) {}
+};
+
+class FinalizationException : public runtime_error {
+public:
+    FinalizationException(const string& msg) : runtime_error(msg) {}
+};
+
+class InvalidIDException : public runtime_error {
+public:
+    InvalidIDException(const string& msg) : runtime_error(msg) {}
+};
+
+class InvalidContactException : public runtime_error {
+public:
+    InvalidContactException(const string& msg) : runtime_error(msg) {}
+};
+
+// ---------- Logging Function -------------
+void logException(const string& msg) {
+    ofstream logfile("log.txt", ios::app);
+    logfile << "Exception: " << msg << endl;
+    logfile.close();
+}
+
+// ---------- Person Base Class ------------
+class Person {
+protected:
+    string id, name, contact;
+public:
+    Person(string _id, string _name, string _contact) {
+        if (_id.empty()) throw InvalidIDException("ID cannot be empty");
+        if (_contact.length() < 10) throw InvalidContactException("Invalid contact number");
+        id = _id;
+        name = _name;
+        contact = _contact;
+    }
+
+    string getId() const { return id; }
+    string getName() const { return name; }
+};
+
+// ---------- Student & Professor ----------
+class Student : public Person {
+public:
+    Student(string id, string name, string contact) : Person(id, name, contact) {}
+};
+
+class Professor : public Person {
+public:
+    Professor(string id, string name, string contact) : Person(id, name, contact) {}
+};
+
+// ----------- Course ----------------------
+class Course {
+public:
+    string code, title;
+    int capacity;
+    vector<string> prerequisites;
+    vector<Student*> enrolled;
+    Professor* instructor = nullptr;
+
+    Course(string _code, string _title, int _capacity)
+        : code(_code), title(_title), capacity(_capacity) {}
+
+    void enroll(Student* student) {
+        if (enrolled.size() >= capacity)
+            throw CourseFullException("Course " + code + " is full");
+        enrolled.push_back(student);
+    }
+
+    void assignProfessor(Professor* prof) {
+        instructor = prof;
+    }
+};
+
+// ----------- GradeBook -------------------
+class GradeBook {
+    map<string, char> grades; // student_id -> grade
+    bool finalized = false;
+public:
+    void enterGrade(string studentId, char grade) {
+        if (finalized) throw UnauthorizedGradeChangeException("Grades are finalized");
+        if (grade < 'A' || grade > 'F') throw InvalidGradeException("Invalid grade");
+        grades[studentId] = grade;
+    }
+
+    void finalize() {
+        if (grades.empty()) throw FinalizationException("No grades to finalize");
+        finalized = true;
+    }
+
+    void showGrades() {
+        for (auto& pair : grades)
+            cout << "Student ID: " << pair.first << ", Grade: " << pair.second << endl;
+    }
+};
+
+// ----------- UniversitySystem ------------
+class UniversitySystem {
+    vector<Student> students;
+    vector<Professor> professors;
+    vector<Course> courses;
+    map<string, GradeBook> gradeBooks;
+
+public:
+    void addStudent(const Student& s) { students.push_back(s); }
+    void addProfessor(const Professor& p) { professors.push_back(p); }
+
+    void addCourse(const Course& c) { courses.push_back(c); }
+
+    void enrollStudentInCourse(string studentId, string courseCode) {
+        Student* s = nullptr;
+        Course* c = nullptr;
+
+        for (auto& stu : students)
+            if (stu.getId() == studentId) s = &stu;
+
+        for (auto& course : courses)
+            if (course.code == courseCode) c = &course;
+
+        if (!s || !c) throw runtime_error("Invalid student/course");
+
+        c->enroll(s);
+    }
+
+    void assignProfessorToCourse(string professorId, string courseCode) {
+        Professor* p = nullptr;
+        Course* c = nullptr;
+
+        for (auto& prof : professors)
+            if (prof.getId() == professorId) p = &prof;
+
+        for (auto& course : courses)
+            if (course.code == courseCode) c = &course;
+
+        if (!p || !c) throw runtime_error("Invalid professor/course");
+
+        c->assignProfessor(p);
+    }
+
+    void enterGrade(string studentId, string courseCode, char grade) {
+        gradeBooks[courseCode].enterGrade(studentId, grade);
+    }
+
+    void finalizeGrades(string courseCode) {
+        gradeBooks[courseCode].finalize();
+    }
+
+    void showGrades(string courseCode) {
+        gradeBooks[courseCode].showGrades();
+    }
+
+    void generateReport() {
+        cout << "Total Students: " << students.size() << endl;
+        cout << "Total Professors: " << professors.size() << endl;
+        cout << "Total Courses: " << courses.size() << endl;
+    }
+};
+
+// ----------- Menu-driven Test ------------
+void menu() {
+    UniversitySystem uni;
+
+    while (true) {
+        cout << "\n--- University Management System ---\n";
+        cout << "1. Add Student\n2. Add Professor\n3. Add Course\n4. Enroll Student\n";
+        cout << "5. Assign Professor\n6. Enter Grade\n7. Finalize Grades\n";
+        cout << "8. Show Grades\n9. Generate Report\n0. Exit\nChoice: ";
+
+        int choice;
+        cin >> choice;
+
+        try {
+            if (choice == 1) {
+                string id, name, contact;
+                cout << "Enter ID, Name, Contact: ";
+                cin >> id >> name >> contact;
+                uni.addStudent(Student(id, name, contact));
+            } else if (choice == 2) {
+                string id, name, contact;
+                cout << "Enter ID, Name, Contact: ";
+                cin >> id >> name >> contact;
+                uni.addProfessor(Professor(id, name, contact));
+            } else if (choice == 3) {
+                string code, title;
+                int capacity;
+                cout << "Enter Course Code, Title, Capacity: ";
+                cin >> code >> title >> capacity;
+                uni.addCourse(Course(code, title, capacity));
+            } else if (choice == 4) {
+                string sid, ccode;
+                cout << "Enter Student ID and Course Code: ";
+                cin >> sid >> ccode;
+                uni.enrollStudentInCourse(sid, ccode);
+            } else if (choice == 5) {
+                string pid, ccode;
+                cout << "Enter Professor ID and Course Code: ";
+                cin >> pid >> ccode;
+                uni.assignProfessorToCourse(pid, ccode);
+            } else if (choice == 6) {
+                string sid, ccode;
+                char grade;
+                cout << "Enter Student ID, Course Code, and Grade: ";
+                cin >> sid >> ccode >> grade;
+                uni.enterGrade(sid, ccode, grade);
+            } else if (choice == 7) {
+                string ccode;
+                cout << "Enter Course Code to Finalize Grades: ";
+                cin >> ccode;
+                uni.finalizeGrades(ccode);
+            } else if (choice == 8) {
+                string ccode;
+                cout << "Enter Course Code to Show Grades: ";
+                cin >> ccode;
+                uni.showGrades(ccode);
+            } else if (choice == 9) {
+                uni.generateReport();
+            } else if (choice == 0) {
+                break;
+            } else {
+                cout << "Invalid choice.\n";
+            }
+        } catch (const exception& e) {
+            cout << "Error: " << e.what() << endl;
+            logException(e.what());
+        }
+    }
+}
+
+int main() {
+    menu();
+    return 0;
+}
+
